@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>AJAX Demo | Routes</title>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+    <style>
+        .container {
+            padding-top: 1em;
+        }
+    </style>
+
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+<body>
+    <div class="container">
+        <div class="header clearfix">
+            <nav>
+                <ul class="nav nav-pills pull-right">
+                    <li role="presentation"><a href="index.html">Home</a></li>
+                    <li role="presentation"><a href="stops.html">Stops</a></li>
+                    <li role="presentation" class="active"><a href="routes.html">Routes</a></li>
+                </ul>
+            </nav>
+            <h3 class="text-muted">AJAX/OBA Demos</h3>
+        </div>
+
+        <div class="jumbotron">
+            <h1>Pull Routes</h1>
+            <p class="lead">How many routes are there?! A lot. Click the button below for a list:</p>
+            <p><button class="btn btn-lg btn-success" href="#" role="button" id="launch">Show Me Routes</button></p>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-12">
+                <ul class="table routes"></ul>
+            </div>
+        </div>
+
+        <footer class="footer">
+            <p>&copy; 2016 Community Transit</p>
+        </footer>
+
+    </div> <!-- /container -->
+
+
+
+    <script type="text/javascript">
+        $(function () {
+            var api = "http://api.pugetsound.onebusaway.org/api/where/routes-for-agency/29.json?key=fe86c358-5cd9-4d62-ae70-f2e57d4e0d26&callback=?";
+
+            $('#launch').on('click', function () {
+
+                $.ajax({
+                    url: api,
+                    type: "GET",
+                    dataType: "json",
+                })
+				.done(function (json) {
+				    $(".table").before("<p>Count: " + json.data.list.length + "</p>");
+
+				    for (var i = 0; i < json.data.list.length; i++) {
+				        $("<li>").text(
+                            json.data.list[i].shortName +
+                            ' - ' +
+                            json.data.list[i].longName
+                            ).appendTo($(".routes"));
+				    }
+
+				})
+				.fail(function (xhr, status, errorThrown) {
+				    alert("Sorry, there was a problem!");
+				    console.log("Error: " + errorThrown);
+				    console.log("Status: " + status);
+				    console.dir(xhr);
+				})
+				.always(function (xhr, status) {
+				    //alert("The request is complete!");
+				});
+            });
+        });
+    </script>
+
+
+</body>
+</html>
